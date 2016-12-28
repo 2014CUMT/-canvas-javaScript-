@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>	碰撞检测——基于距离的碰撞检测.html</title>
+</head>
+<body style="background: black">
+		<textarea id="log" style="width:100%;height: 30px;font-size: 20px;text-align: center;"></textarea>
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var log=document.getElementById("log");
+			var context=canvas.getContext("2d");
+			var ballA=new Ball(30,"#479AC7");
+			var ballB=new Ball(30,"#479AC7");
+			ballA.x=canvas.width/2;
+			ballA.y=canvas.height/2;
+			var mouse=utils.captureMouse(canvas);
+			canvas.addEventListener("mousemove",function(){
+				drawFrame();
+			});
+			drawFrame();
+			function drawFrame(){
+				context.clearRect(0,0,canvas.width,canvas.height);
+				ballB.x=mouse.x;
+				ballB.y=mouse.y;
+				var dx=ballA.x-ballB.x;
+				var dy=ballB.y-ballB.y;
+				var distance=Math.sqrt(dx*dx,dy*dy);
+				if(distance<ballA.radius+ballB.radius){
+					log.value="hit!";
+				}
+				else{
+					log.value=" ";
+				}
+				ballA.draw(context);
+				ballB.draw(context);
+			}
+		}
+	</script>
+</body>
+</html>

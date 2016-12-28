@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动——目标点移动情况下的缓动.html</title>
+</head>
+<body style="background: black;">
+	<textarea style="height:30px;width:100%;font-size:20px;text-align:center;" id="log"></textarea>
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript"   src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var log=document.getElementById("log");
+			var context=canvas.getContext("2d");
+			var ball=new Ball(25,"#479AC7");
+			ball.x=Math.random()*canvas.width;
+			ball.y=Math.random()*canvas.height;
+			var target=utils.captureMouse(canvas);
+			var targetX;
+			var targetY;
+			var easing=0.1;
+			var distance;
+			var animRequest;
+			function drawFrame(){
+				animRequest=window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				var dx=targetX-ball.x;
+				var dy=targetY-ball.y;
+				var distance=Math.sqrt(dx*dx,dy*dy);
+				if(distance<1){
+					window.cancelRequestAnimationFrame(animRequest);
+					log.value="get to target!";
+				}else{
+					ball.vx=(targetX-ball.x)*easing;
+					ball.vy=(targetY-ball.y)*easing;
+					ball.x+=ball.vx;
+					ball.y+=ball.vy;
+				}	
+				ball.draw(context);
+			}
+			canvas.addEventListener("mousedown",function(){
+				log.value="";
+				drawFrame();
+			})
+			canvas.addEventListener("mousemove",function(){
+				targetX=target.x;
+				targetY=target.y;
+			});
+
+		}
+	</script>
+</body>
+</html>

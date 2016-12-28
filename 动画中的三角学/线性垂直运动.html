@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>线性垂直运动</title>
+	<style>
+		body{ background: black; }
+		canvas{position: absolute;}
+	</style>
+	<script src="utils.js"></script>
+	<script src="ball.js"></script>
+	<script>
+		window.onload=function(){
+			var oC=document.getElementById("myCanvas");
+			var oGc=oC.getContext("2d");
+			oC.style.left=(document.body.offsetWidth-oC.offsetWidth)/2+"px";
+		
+		/*	oC.style.top=(document.body.offsetHeight-oC.offsetHeight)/2+"px";*/
+			
+			var ball=new Ball();
+			//drawFrame中总结出以下变量：speedX,speedY,centerY,range,angle;	最好将这些变量写在函数呢外面，以方便修改
+			var angle=0,speedX=0.5,speedY=1,centerX=ball.r,centerY=oC.height/2,range=(oC.height/2-ball.r), leftLine=ball.r, rightLine=oC.width-ball.r, driect=1;
+
+				 ball.x=centerX;
+			function drawFrame(){
+				window.requestAnimationFrame(drawFrame,oC);
+				oGc.clearRect(0,0,oC.width,oC.height);
+				if(ball.x<leftLine){
+					driect=1;}
+				if(ball.x>rightLine){
+					driect=-1;
+				}
+				ball.x+=speedX*driect;
+				ball.y=centerY+range*Math.sin(angle);
+				ball.draw(oGc);
+				angle+=speedY*Math.PI/180;
+			}
+			
+			drawFrame();
+		}
+	</script>
+</head>
+<body >
+	<canvas width="600px" height="400px" style="background-color: white" id="myCanvas">
+		
+	</canvas>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>碰撞检测——方块随机落下.html</title>
+</head>
+<body style="background:black">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/box.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var boxes=[];
+			var activeBox=createBox();
+			activeBox.draw(context);
+			var gravity=0.2;
+			function createBox(){
+				var box=new Box(Math.random()*40+10,Math.random()*40+10);
+				box.x=Math.random()*canvas.width;
+				boxes.push(box);
+				return box;
+			}
+			function drawBox(box){
+				if(activeBox!==box&&utils.intersects(activeBox,box)){
+					activeBox.y=box.y-activeBox.height;
+					activeBox=createBox();
+				}
+				box.draw(context);
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				activeBox.vy+=gravity;
+				activeBox.y+=activeBox.vy;
+				if(activeBox.y+activeBox.height>canvas.height){
+					activeBox.y=canvas.height-activeBox.height;
+					activeBox.vy=0;
+					activeBox=createBox();
+				}
+				boxes.forEach(drawBox);
+			}());
+		}
+	</script>
+</body>
+</html>

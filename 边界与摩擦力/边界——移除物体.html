@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>边界——移除物体</title>
+</head>
+<body>
+	<canvas id="canvas" width=400; height=400; style="background: black;display: block;"></canvas>
+	<textarea id="log" style="text-again:center;"></textarea>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+				context=canvas.getContext('2d');
+				log=document.getElementById("log");
+				balls=[];
+				numBalls=10;
+			for(var i=0;i<numBalls;i++){
+				ball=new Ball(20);
+				ball.id="ball"+i;
+				ball.x=Math.random()*canvas.width;
+				ball.y=Math.random()*canvas.height;
+				ball.vx=Math.random()*2-1;
+				ball.vy=Math.random()*2-1;
+				balls.push(ball);
+			}
+			function draw(ball,pos){
+				ball.x+=ball.vx;
+				ball.y+=ball.vy;
+				var left=0;
+				var right=canvas.width;
+				var top=0;
+				var bottom=canvas.height;
+				if(ball.x+ball.radius<left||ball.x-ball.radius>right||ball.y+ball.radius<top||ball.y-ball.radius>bottom){
+					balls.splice(pos,1);//从pos位置移除一个球;
+					if(balls.length>0){
+						log.value="Remove"+ball.id;
+					}else{
+						log.value="All gone!"
+					}
+				}
+				else {
+					ball.draw(context);
+				}
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				var i=balls.length;
+				while(i--){		
+					draw(balls[i],i);
+					//注意此处,是从balls数组的末尾开始遍历
+					//因为当删除一个球的时候,会影响后续的球的下标，因此会跳过一个球。
+				}
+			}());
+		}
+	</script>
+</body>
+</html>

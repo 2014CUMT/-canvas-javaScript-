@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>判断鼠标是否在物体范围内</title>
+</head>
+<body>
+	<canvas id="canvas" width="400" height="400" style="background:black;margin: auto;display: block;" ></canvas>
+	<textarea id="log"></textarea>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+				log=document.getElementById("log");
+				context=canvas.getContext('2d');
+				ball=new Ball(50,"#479AC7");
+				ball.x=canvas.width/2;
+				ball.y=canvas.height/2;
+				ball.draw(context);
+				var mouse=utils.captureMouse(canvas);
+				var timeStamp=0;
+				canvas.addEventListener('mousedown',function(){
+					var rect=ball.getBounds();
+					if(utils.containsPoint(rect,mouse.x,mouse.y)){
+						log.value="in ball:mousedown";
+					}else{	
+						log.value="canvas:mousedown";
+					}	
+				},false);
+				canvas.addEventListener('mouseup',function(event){
+					var ev=event||window.event;
+					timeStamp=ev.timeStamp;
+					var rect=ball.getBounds();
+					if(utils.containsPoint(rect,mouse.x,mouse.y)){
+						log.value="in ball:mouseup";
+					}else{
+						log.value="canvas:mouseup";
+					}
+				},false);
+				//这里需要注意的是在谷歌浏览器中有一个bug,
+				//mouseup事件在触发时,mousemove事件也会被触发，
+				//解决办法：在两者之间先顶一个时间timeStamp，利用时间戳e.timeStamp。
+		
+
+				canvas.addEventListener('mousemove',function(event){
+					var ev=event||window.event;
+					//console.log(ev.timeStamp);
+					//console.log(timeStamp);
+					var rect=ball.getBounds();
+					 if(timeStamp==0||ev.timeStamp-timeStamp>10){
+						if(utils.containsPoint(rect,mouse.x,mouse.y)){
+							log.value="in ball:mousemove";
+						}else{
+							log.value="canvas:mousemove";
+						}
+					}
+					timeStamp=0;
+				},false);
+		}
+	</script>
+</body>
+</html>

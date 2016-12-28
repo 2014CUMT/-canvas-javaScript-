@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>拖拽对象</title>
+</head>
+<body style="background: black"> 
+	<canvas id="canvas" width=500 height=400 style="background:white;display:block;margin:auto;"></canvas>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			
+			   
+
+			var canvas=document.getElementById("canvas"),
+				context=canvas.getContext('2d'),
+				ball=new Ball(50,"#479AC7"),
+			    position=utils.captureMouse(canvas);
+			    ball.x=canvas.width/2;
+			    ball.y=canvas.height/2;
+			    canvas.addEventListener("mousedown",function(){
+			    	if(utils.containsPoint(ball.getBounds(),position.x,position.y)){
+
+			    		canvas.addEventListener("mouseup",onmouseUp);
+			    		canvas.addEventListener("mousemove",onmouseMove);
+			    	}	
+			    });
+			    function onmouseUp(){
+			    	canvas.removeEventListener("mouseup",onmouseUp,false);
+			    	canvas.removeEventListener("mousemove",onmouseMove,false);
+			    }
+			    function onmouseMove(){
+			    	ball.x= position.x;
+			    	ball.y= position.y;
+			    }
+			    (function drawFrame(){
+			    	window.requestAnimationFrame(drawFrame,context);
+			    	context.clearRect(0,0,canvas.width,canvas.height);
+			   	 	ball.draw(context);
+			    }());
+		}
+	</script>
+</body>
+</html>

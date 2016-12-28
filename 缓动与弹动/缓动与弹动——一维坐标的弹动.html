@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动与弹动——一维坐标的弹动.html</title>
+</head>
+<body style="background: black;">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript"   src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var ball=new Ball(25,"#479AC7");
+			ball.x=ball.radius+25;
+			ball.y=canvas.height/2;
+			ball.vy=0;
+			var string=0.1;
+			var distanceX;
+			var target={}
+			target.x=canvas.width/2;
+			target.y=canvas.height/2;
+			var friction=0.98;
+			var animRequst;
+			
+			(function  drawFrame(){
+				animRequst=window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				//如果小球的速度和加速度是0则小球停止运动，然后就关闭运动。
+				if(Math.abs(ball.vx)<0.01&&Math.abs(ball.ax)<string){
+					window.cancelRequestAnimationFrame(animRequst);
+					alert("stop");
+				}else{
+					distanceX=target.x-ball.x;
+					ball.ax=distanceX*string;
+					//ball.ay=
+					ball.vx+=ball.ax;
+					ball.vx*=friction;
+					ball.x+=ball.vx; 
+				}
+				ball.draw(context);
+			}());
+		}
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动与弹动——弹簧固定长度时确定目标点.html</title>
+</head>
+<body style="background: black">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var mouse=utils.captureMouse(canvas);
+			var fixedX;
+			var fixedY;
+			var targetX;
+			var targetY;
+			var length=100;
+			
+			var ball=new Ball(25,"#479AC7");
+			ball.x=Math.random()*canvas.width;
+			ball.y=Math.random()*canvas.height;
+			var spring=0.1;
+			var friction=0.95;
+			var gravity=2;
+			
+			canvas.addEventListener("mousedown",function(){
+				fixedX=mouse.x;
+				fixedY=mouse.y;
+				context.beginPath();
+				context.moveTo(fixedX,fixedY);
+				context.lineTo(ball.x,ball.y);
+				context.stroke();
+				ball.draw(context);
+			})
+			document.addEventListener("keydown",function(){
+				drawFrame();
+			})
+			function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				var dx=ball.x-fixedX;
+				var dy=ball.y-fixedY;
+				var single=Math.atan2(dy,dx);
+				targetX=fixedX+length*Math.cos(single);
+				targetY=fixedY+length*Math.sin(single);
+				ball.vx+=(targetX-ball.x)*spring;
+				ball.vy+=(targetY-ball.y)*spring;
+				ball.vy+=gravity;
+				ball.vx*=friction;
+				ball.vy*=friction;
+				ball.x+=ball.vx;
+				ball.y+=ball.vy;
+				context.beginPath();
+				context.moveTo(fixedX,fixedY);
+				context.lineTo(ball.x,ball.y);
+				context.stroke();
+				ball.draw(context);
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>边界——屏幕环绕</title>
+</head>
+<body>
+	<canvas id="canvas" width=500; height=400; style="background:black;display: block; margin: auto"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+				context=canvas.getContext("2d");
+				ball=new Ball(50,"#479AC7");
+				ball.x=canvas.width/2;
+				ball.y=canvas.height/2;
+				//gravity=-0.5;
+				ball.vx=Math.random()*8-4;
+				ball.vy=Math.random()*6-3;
+			function draw(ball){
+				//ball.vy+=-0.5;
+				ball.x+=ball.vx;
+				ball.y+=ball.vy;
+				var left=0;
+				var right=canvas.width;
+				var top=0;
+				var bottom=canvas.height;
+				if(ball.x-ball.radius<=left){
+					ball.x=left+ball.radius;
+					ball.vx*=-1;
+				}
+				else if(ball.x+ball.radius>=right){
+					ball.x=right-ball.radius;
+					ball.vx*=-1;
+				}
+				if(ball.y-ball.radius<=top){
+					ball.y=top+ball.radius;
+					ball.vy*=-1;
+
+				}
+				else if(ball.y+ball.radius>=bottom){
+					ball.y=bottom-ball.radius;
+					ball.vy*=-1;
+				}
+				ball.draw(context);
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				draw(ball);
+			}());
+
+		}
+	</script>
+
+</body>
+</html>

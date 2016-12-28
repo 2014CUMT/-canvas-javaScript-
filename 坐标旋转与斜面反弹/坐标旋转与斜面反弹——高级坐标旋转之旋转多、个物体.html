@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>坐标旋转与斜面反弹——高级坐标旋转之旋转多个物体.html</title>
+</head>
+<body style="background: black">
+	<canvas id="canvas" width=600 height=500 style="background:white;margin-left:auto;margin-right:auto;display: block;"></canvas>
+	<script type="text/javascript" src="..\object\ball.js"></script>
+	<script type="text/javascript" src="..\wheel\utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById('canvas');
+			var context=canvas.getContext("2d");
+			var mouse=utils.captureMouse(canvas);
+			var center={};
+			center.x=canvas.width/2;
+			center.y=canvas.height/2;
+			var ratio=0.0005;
+			var angleV=ratio;
+			var balls=[];
+			var num=10;
+			var cos;
+			var sin;
+			for(var i=0;i<num;i++){
+				var ball=new Ball(25,"#479AC7");
+				ball.x=canvas.height*Math.random();
+				ball.y=canvas.height*Math.random();
+				balls.push(ball);
+			}
+			function move(ball){
+				var x=ball.x-center.x;
+				var y=ball.y-center.y;
+				
+				var x1=x*cos-y*sin;	
+				var y1=y*cos+x*sin;
+				ball.x=x1+center.x;
+				ball.y=y1+center.y;
+				ball.draw(context);
+			}
+			(function  drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				cos=Math.cos(angleV);
+				sin=Math.sin(angleV);
+				angleV=(mouse.x-center.x)*ratio;
+				balls.forEach(move);
+			}());
+		}
+	</script>
+</body>
+</html>

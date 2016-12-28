@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>坐标旋转与斜面反弹——高级坐标旋转之多斜面反弹.html</title>
+</head>
+<body style="background: black">
+	<canvas id="canvas" width=600 height=500 style="background:white;margin-left:auto;margin-right:auto;display: block;"></canvas>
+	<script type="text/javascript" src="..\object\ball.js"></script>
+	<script type="text/javascript" src="..\object\Line.js"></script>
+	<script type="text/javascript" src="..\wheel\utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var ball=new Ball(35,"#479AC7");
+			var line=new Line(30,0,300,0);
+			var gravity=0.001;
+			var bounce=-1;
+			ball.x=100;
+			ball.y=100;
+
+			var lines=[];
+			
+			lines[0]=new Line(-50,0,50,0);
+			lines[0].x=100;
+			lines[0].y=100;
+			lines[1]=new Line(-50,0,50,0);
+			lines[1].x=150;
+			lines[1].y=200;
+			lines[2]=new Line(-50,0,50,0);
+			lines[2].x=400;
+			lines[2].y=300;
+			lines[3]=new Line(-50,0,50,0);
+			lines[3].x=500;
+			lines[3].y=400;
+			lines[4]=new Line(-50,0,50,0);
+			lines[4].x=500;
+			lines[4].y=200;
+			lines[5]=new Line(-50,0,50,0);
+			lines[5].x=350;
+			lines[5].y=350;
+
+			for(var i=0;i<6;i++){
+				lines[i].rotation=Math.random()*80*Math.PI/180;
+			}	
+			function checkLine(line){
+				var bounds=line.getBounds();
+				//line.rotation=(mouse.x-canvas.width/2)*0.001;
+				var cos;
+				var sin;
+				cos=Math.cos(line.rotation);
+				sin=Math.sin(line.rotation);
+
+				ball.vy+=gravity;
+				ball.x+=ball.vx;
+				ball.y+=ball.vy;
+				if(ball.x+ball.radius>bounds.x&&ball.x-ball.radius<bounds.x+bounds.width){
+
+					var x1=ball.x-line.x;
+					var y1=ball.y-line.y;
+					var x2=x1*cos+y1*sin;
+					var y2=y1*cos-x1*sin;
+
+					var vy1=ball.vy*cos-ball.vx*sin;
+					var distance=line.getDistance(ball.x,ball.y);
+					
+					if(distance<ball.radius){
+
+						if(line.onLine(ball.x,ball.y)==-1){
+							y2=-ball.radius;
+						}else if(line.onLine(ball.x,ball.y)==1){
+							y2=ball.radius;
+						}
+						var vx1=ball.vx*cos+ball.vy*sin;
+						vy1*=bounce;
+
+						x1=x2*cos-y2*sin;
+						y1=y2*cos+x2*sin;
+
+						ball.vx=vx1*cos-vy1*sin;
+						ball.vy=vy1*cos+vx1*sin;
+				
+						ball.x=line.x+x1;
+						ball.y=line.y+y1;
+					}
+				}
+			}
+			function drawLine(line){
+				checkLine(line);
+				line.draw(context);
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				var left=0;
+				var right=canvas.width;
+				var top=0;
+				var bottom=canvas.height;
+				if(ball.x-ball.radius<=left){
+					ball.x=left+ball.radius;
+					ball.vx*=-1;
+				}
+				else if(ball.x+ball.radius>=right){
+					ball.x=right-ball.radius;
+					ball.vx*=-1;
+				}
+				if(ball.y-ball.radius<=top){
+					ball.y=top+ball.radius;
+					ball.vy*=-1;
+
+				}
+				else if(ball.y+ball.radius>=bottom){
+					ball.y=bottom-ball.radius;
+					ball.vy*=-1;
+				}
+				lines.forEach(drawLine);
+				ball.draw(context);
+			}());
+
+		}
+	</script>
+</body>
+</html>

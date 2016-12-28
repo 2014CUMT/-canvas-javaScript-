@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动与弹动——链式弹动.html</title>
+</head>
+<body style="background: black;">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript"   src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var balls=[];
+			var num=3;
+			while(num>0){
+				if(num==3){
+					ball=new Ball(25,"#ff0000");
+				}
+				else{
+					ball=new Ball(25,"#479AC7");
+				}
+				ball.x=Math.random()*canvas.width;
+				ball.y=Math.random()*canvas.height;
+				ball.draw(context);
+				balls.push(ball);
+				num--;
+			}	
+			var string=0.1;
+			//第一个小球的目标地。
+			var ball1_target={}
+			var friction=0.98;
+			var gravity=2;
+			var animRequst;
+			var mouse=utils.captureMouse(canvas);
+			var v;
+			var a;
+			canvas.addEventListener("mousedown",function(){
+					ball1_target.x=mouse.x;
+					ball1_target.y=mouse.y;
+					drawFrame();
+			})
+
+
+			function move(target,ball){
+				var distance={};
+				distance.x=target.x-ball.x;
+				distance.y=target.y-ball.y;
+				ball.ax=distance.x*string;
+				ball.ay=distance.y*string;
+				ball.vx+=ball.ax;
+				ball.vy+=ball.ay;
+				ball.vy+=gravity;
+				ball.vx*=friction;
+				ball.vy*=friction;
+				ball.x+=ball.vx; 
+				ball.y+=ball.vy;		
+			}
+
+			function draw(ball,i){
+				var target={};
+				if(i==0){
+					target=ball1_target
+					
+				}else{
+					target.x=balls[i-1].x;
+					target.y=balls[i-1].y;
+				}
+				move(target,ball);
+				context.moveTo(target.x,target.y);
+				context.lineTo(ball.x,ball.y);
+				context.stroke();
+				ball.draw(context);
+			}
+			function  drawFrame(){
+				animRequst=window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				context.beginPath();
+				balls.forEach(draw);	
+			};
+		}
+	</script>
+	
+</body>
+</html>

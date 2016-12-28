@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动与——简单的缓动</title>
+</head>
+<body style="background:black">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript"   src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var ball=new Ball(25,"#479AC7");
+			ball.x=ball.radius;
+			ball.y=canvas.height/2;
+			var position=utils.captureMouse(canvas);
+			var targetX=canvas.width-ball.radius;
+			var targetY=canvas.height/2;
+			var easing=0.1;
+			//小球到目标点的距离。
+			var distance;
+			var isMOusedown=false;
+			var animRequest;
+			canvas.addEventListener("mousedown",function(){
+			
+				isMOusedown=true;
+				if(utils.containsPoint(ball.getBounds(),position.x,position.y)){
+					//鼠标按下时，重新让小球运动。
+					drawFrame();
+					canvas.addEventListener("mouseup",mouseup);
+					canvas.addEventListener("mousemove",mousemove);
+				}
+				
+			});
+			function mouseup(){
+				 isMOusedown=false;
+				 canvas.removeEventListener("mouseup",mouseup);
+				 canvas.removeEventListener("mousemove",mousemove);
+			}
+			function mousemove(){
+				ball.x=position.x;
+				ball.y=position.y;
+			}
+
+			function drawFrame(){
+				animRequest=window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				if(!isMOusedown){
+					var dx=targetX-ball.x;
+					var dy=targetY-ball.y;
+					distance=Math.sqrt(dx*dx+dy*dy);
+					if(distance<1){
+						window.cancelRequestAnimationFrame(animRequest);
+						alert("get to target!");
+					}else{
+						ball.vx=(targetX-ball.x)*easing;
+						ball.vy=(targetY-ball.y)*easing;
+						ball.x+=ball.vx;
+						ball.y+=ball.vy;
+					}	
+				}
+				ball.draw(context);
+			};
+			drawFrame();
+		}
+	</script>
+</body>
+</html>

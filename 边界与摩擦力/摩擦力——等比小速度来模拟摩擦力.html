@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>摩擦力</title>
+</head>
+<body>
+	<canvas id="canvas" width="500" height="400" style="background:black;display:block;margin: auto"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+				context=canvas.getContext("2d");
+				ball=new Ball(50,"#479AC7");
+				ball.x=canvas.width/2;
+				ball.y=canvas.height/2;
+				ball.vx=Math.random()*16-8;
+				ball.vy=Math.random()*14-7;
+				friction=0.97;
+				(function drawFrame(){
+					window.requestAnimationFrame(drawFrame,canvas);
+					context.clearRect(0,0,canvas.width,canvas.height);
+					ball.vx*=friction;
+					ball.vy*=friction;
+					ball.x+=ball.vx;
+					ball.y+=ball.vy;
+					ball.draw(context);
+				}());
+		}
+	</script>
+</body>
+</html>

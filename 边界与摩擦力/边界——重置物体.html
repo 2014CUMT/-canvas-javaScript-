@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>边界——重置物体</title>
+</head>
+<body>
+	<canvas id="canvas" width="400" height="400" style="margin:auto;display: block;"></canvas>
+	<script type="text/javascript" src="..\wheel\utils.js"></script>
+	<script type="text/javascript" src="..\object\ball.js"></script>
+	<script>
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+				context=canvas.getContext("2d");
+				balls=[];
+				numBalls=2000;
+				gravity=0.5;
+			for(var i=0;i<numBalls;i++){
+				var ball=new Ball(2,"#ff0000");//
+				ball.x=canvas.width/2;
+				ball.y=canvas.height;
+				ball.vx=Math.random()*10-5;
+				ball.vy=Math.random()*-10-10;
+				balls.push(ball);
+			}
+			function draw(ball){
+				ball.x+=ball.vx;
+				ball.vy+=gravity;
+				ball.y+=ball.vy;
+				var left=0;
+				var right=canvas.width;
+				var top=0;
+				var bottom=canvas.height;
+				if(ball.x+ball.radius<left||ball.x-ball.radius>right||ball.y+ball.radius<0||ball.y-ball.vy>bottom){
+					ball.x=canvas.width/2;
+					ball.y=canvas.height;
+					ball.vx=Math.random()*6-3;
+					ball.vy=Math.random()*-10-10;
+				}
+					ball.draw(context);
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);	
+				var i=0;	
+				while(i<balls.length){
+					draw(balls[i++]);
+				}
+			}());
+			//drawFrame(context);
+	}
+	</script>
+</body>
+</html>

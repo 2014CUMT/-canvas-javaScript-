@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>平滑的上下运动</title>
+	<style>
+		body{ background: black; }
+		canvas{position: absolute;}
+	</style>
+	<script src="utils.js"></script>
+	<script src="ball.js"></script>
+	<script>
+		window.onload=function(){
+			var oC=document.getElementById("myCanvas");
+			var oGc=oC.getContext("2d");
+			oC.style.left=(document.body.offsetWidth-oC.offsetWidth)/2+"px";
+		
+		/*	oC.style.top=(document.body.offsetHeight-oC.offsetHeight)/2+"px";*/
+			var ball=new Ball();
+
+			//drawFrame中总结出以下变量：peedY,centerY,range,angle;	最好将这些变量写在函数呢外面，以方便修改
+			var angle=0,speedY=1,centerY=oC.height/2,range=(oC.height/2-ball.r);
+			ball.x=oC.width/2;	
+			function drawFrame(){
+				window.requestAnimationFrame(drawFrame,oC);
+				oGc.clearRect(0,0,oC.width,oC.height);
+				ball.y=centerY+range*Math.sin(angle);
+				ball.draw(oGc);
+				angle+=speedY*Math.PI/180;
+			}
+			
+			drawFrame();
+		}
+	</script>
+</head>
+<body >
+	<canvas width="600px" height="400px" style="background-color: white" id="myCanvas">
+		
+	</canvas>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>缓动与弹动——多个目标点的弹动.html</title>
+</head>
+<body  style="background:black">
+	<canvas id="canvas" width=600 height=400 style="background: white;margin-left: auto;margin-right:auto;display:block;"></canvas>
+	<script type="text/javascript" src="../object/ball.js"></script>
+	<script type="text/javascript" src="../wheel/utils.js"></script>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var context=canvas.getContext("2d");
+			var handles=[];
+			var num=3;
+			var movingHandle=null;
+			var mouse=utils.captureMouse(canvas);
+			var ball=new Ball(25,"#479AC7");
+			ball.x=canvas.width/2;
+			ball.y=canvas.height/2;
+			var string=0.1;
+			var friction=0.95;
+			var gravity=2;
+			for(var i=0;i<num;i++){
+				var handle=new Ball(15,"#000000");
+				handle.x=Math.random()*canvas.width;
+				handle.y=Math.random()*canvas.height;
+				handles.push(handle);
+			}
+			
+			//实现拖动handles中的小球
+			canvas.addEventListener("mousedown",function(){
+				handles.forEach(function(handle){
+					var rect=handle.getBounds();
+					if(utils.containsPoint(rect,mouse.x,mouse.y)){
+						movingHandle=handle;
+					}
+				});
+				canvas.addEventListener("mousemove",mousemove);
+				canvas.addEventListener("mouseup",mouseup);
+			});
+			function mousemove(){
+				if(movingHandle){
+					movingHandle.x=mouse.x;
+					movingHandle.y=mouse.y;	
+				}
+				
+			}
+			function mouseup(){
+				if(movingHandle)
+					movingHandle=null;
+				canvas.removeEventListener("mousemove",mousemove);
+				canvas.removeEventListener("mouseup",mousemove);
+			}
+			function drawHandle(handle){
+				context.moveTo(handle.x,handle.y);
+				context.lineTo(ball.x,ball.y);
+				context.stroke();
+				handle.draw(context);
+			}
+			function applyHandle(handle){
+				ball.vx+=string*(handle.x-ball.x);
+				ball.vy+=string*(handle.y-ball.y);
+			}
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame,canvas);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				//计算小球的合加速度.
+				handles.forEach(applyHandle);
+				ball.vy+=gravity;
+				ball.vx*=friction;
+				ball.vy*=friction;
+				ball.x+=ball.vx;
+				ball.y+=ball.vy;
+				context.beginPath();
+				handles.forEach(drawHandle);
+				ball.draw(context);
+			}());
+		}
+	</script>
+</body>
+
+	
+
+</html>
